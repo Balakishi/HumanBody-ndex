@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace HumanBodyİndex
 {
@@ -19,23 +20,17 @@ namespace HumanBodyİndex
         double h, w,result_bmi;
         private void button_result_Click(object sender, EventArgs e)
         {
-            try { 
 
-         //i did that in this if block, If you entered string, zero or you have not entered value you will notified by system
- if (!Double.TryParse(textBox_w.Text, out w) || !Double.TryParse(textBox_h.Text, out w) ||
- textBox_h.Text.Contains("-") || textBox_w.Text.Contains("-")|| textBox_h.Text == "0" || textBox_w.Text == "0")
-            
-            {
-                DialogResult result = MessageBox.Show("The values of weight and height of human not be this value or you have not entered the value",
-  "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            
+            //i did that in this if block, If you entered string, zero or you have not entered value you will notified by system
+
             /* in this else blokc, if you not entered string, zero value application calculate BMI but there are two case: heigt 
              * maybe entered with cm and height entered with metr. Therefore, i write two case. My application calculate also two case. 
              * For example, you enterd 170cm heigt or 1,7 metr heigt. It calculate two case
              * 
              */
-                else
+            if (textBox_w.Text.Length > 0 && textBox_h.Text.Length > 0)
+            {
+                try
                 {
                     w = Convert.ToDouble(textBox_w.Text);
                     h = Convert.ToDouble(textBox_h.Text);
@@ -50,8 +45,24 @@ namespace HumanBodyİndex
                         result_bmi = (double)((int)((w / Math.Pow(h, 2)) * 100)) / 100;
                         label_bmi.Text = Convert.ToString(result_bmi);
                     }
-                    #region "Result block"
-                    if (result_bmi < 18.5)
+                }
+                catch
+                {
+                    MessageBox.Show("Please enter numbers only!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else if (System.Text.RegularExpressions.Regex.IsMatch(textBox_w.Text, @"[a-zA-Z]") ||
+    System.Text.RegularExpressions.Regex.IsMatch(textBox_h.Text, @"[a-zA-Z]"))
+            {
+                MessageBox.Show("Please enter numbers only!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else if (textBox_w.Text == "" || textBox_h.Text == "")
+            {
+                MessageBox.Show("Please enter the value!", "ERROR!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
+            #region "Result block"
+            if (result_bmi < 18.5 && result_bmi>1)
                     {
                         label_result.Text = "You are underweight";
                     }
@@ -72,12 +83,11 @@ namespace HumanBodyİndex
                         label_result.Text = "You are extremly obese";
                     }
                     #endregion
-                }
-            }
-            catch
-            {
+         }
+            
+            
                 
-            }
+            
         }
     }
-}
+
